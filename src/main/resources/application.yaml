@@ -1,0 +1,19 @@
+eureka:
+  client:
+    serviceUrl:
+      register-with-eureka: false
+      fetch-registry: false
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
+
+spring:
+  application:
+    name: 'admin-service'
+  cloud:
+    config:
+      enabled: false
+  r2dbc:
+    url: ${DB_CONNECTION_URI}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+server:
+  port: ${SERVER_PORT}

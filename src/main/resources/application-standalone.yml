@@ -1,0 +1,16 @@
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+
+spring:
+  cloud:
+    config:
+      enabled: false
+  r2dbc:
+    url: r2dbc:mysql://localhost:3306/realo?serverTimezone=UTC
+    username: shop
+    password: sugo1111
+
+server:
+  port: 8083
