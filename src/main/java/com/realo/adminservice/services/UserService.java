@@ -8,6 +8,7 @@ import com.realo.adminservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -17,13 +18,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final ProjectUserRepository projectUserRepository;
 
-
-    @Autowired
     public UserService(UserRepository userRepository, ProjectUserRepository projectUserRepository) {
         this.userRepository = userRepository;
         this.projectUserRepository = projectUserRepository;
     }
 
+    @Transactional
     public Mono<User> save(User user) {
         return userRepository.save(user)
                 .onErrorMap(originalException ->
@@ -31,16 +31,19 @@ public class UserService {
                 );
     }
 
+    @Transactional
     public Flux<User> getAll() {
         return userRepository.findAll();
     }
 
+    @Transactional
     public Mono<User> getById(Long id) {
         return userRepository
                 .findById(id)
                 .switchIfEmpty(Mono.error(new NotFoundException("Can't found project id: " + id)));
     }
 
+    @Transactional
     public Mono<Void> delete(Long id) {
         return projectUserRepository.deleteByUserId(id).
                 thenMany(userRepository.deleteById(id))
@@ -50,6 +53,7 @@ public class UserService {
                 );
     }
 
+    @Transactional
     public Mono<User> update(Long id, User updatedUser) {
         return userRepository.findById(id)
                 .switchIfEmpty(Mono.error(new NotFoundException("User Not found")))

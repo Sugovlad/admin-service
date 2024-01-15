@@ -10,6 +10,7 @@ import com.realo.adminservice.repository.ProjectUserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -29,6 +30,7 @@ public class ProjectService {
         this.userService = userService;
     }
 
+    @Transactional
     public Mono<Project> save(Project project) {
         return projectRepository.save(project)
                 .onErrorMap((originalException) ->
@@ -55,10 +57,12 @@ public class ProjectService {
                 });
     }
 
+    @Transactional
     public Flux<Project> getAll() {
         return projectRepository.findAll().flatMap(this::enrichProjectWithUsers);
     }
 
+    @Transactional
     public Mono<Project> getById(Long id) {
         return projectRepository
                 .findById(id)
@@ -66,6 +70,7 @@ public class ProjectService {
                 .flatMap(this::enrichProjectWithUsers);
     }
 
+    @Transactional
     public Mono<Project> update(Long id, Project updatedProject) {
         return getById(id)
                 .map(existedProject -> {
@@ -87,6 +92,7 @@ public class ProjectService {
                         ));
     }
 
+    @Transactional
     public Mono<Void> delete(Long id) {
         return projectUserRepository.deleteByProjectId(id)
                 .thenMany(projectRepository.deleteById(id))
@@ -94,6 +100,7 @@ public class ProjectService {
                 .onErrorMap(originalException -> new NotFoundException("Project not found", originalException));
     }
 
+    @Transactional
     public Mono<Project> addUser(Long projectId, Long userId) {
         var projectMono = getById(projectId);
         var userMono = userService.getById(userId);
@@ -103,6 +110,7 @@ public class ProjectService {
                 .flatMap(tuple -> addUser(tuple.getT1(), tuple.getT2()));
     }
 
+    @Transactional
     public Mono<Project> removeUser(Long projectId, Long userId) {
         var userMono = userService.getById(userId);
         var projectMono = getById(projectId);
@@ -122,7 +130,6 @@ public class ProjectService {
             return saveUserByProject(fullFilledProject.getId(), user.getId())
                     .then(Mono.just(fullFilledProject));
         });
-
     }
 
     private Mono<ProjectUser> saveUserByProject(Long projectId, Long userId) {
