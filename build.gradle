@@ -33,7 +33,7 @@ dependencies {
     implementation 'org.springframework.data:spring-data-r2dbc'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 
-    implementation 'dev.miku:r2dbc-mysql:0.8.2.RELEASE'
+    implementation 'io.asyncer:r2dbc-mysql:1.0.6'
 
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'

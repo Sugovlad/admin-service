@@ -10,7 +10,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/admin-service/user")
+@RequestMapping("/admin/user")
 public class UserController {
     private final UserService userService;
 
