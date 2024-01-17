@@ -58,9 +58,17 @@ public class UserService {
         return userRepository.findById(id)
                 .switchIfEmpty(Mono.error(new NotFoundException("User Not found")))
                 .map(user -> {
-                    user.setFullName(updatedUser.getFullName());
-                    user.setLoginName(updatedUser.getLoginName());
-                    user.setPassword(updatedUser.getPassword());
+                    if (updatedUser.getFullName() != null) {
+                        user.setFullName(updatedUser.getFullName());
+                    }
+
+                    if (updatedUser.getLoginName() != null) {
+                        user.setLoginName(updatedUser.getLoginName());
+                    }
+
+                    if (updatedUser.getPassword() != null) {
+                        user.setPassword(updatedUser.getPassword());
+                    }
 
                     return user;
                 })

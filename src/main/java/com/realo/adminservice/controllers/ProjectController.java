@@ -31,7 +31,7 @@ public class ProjectController {
 
     @GetMapping("/{id}")
     public Mono<Project> getProjectById(@PathVariable Long id) {
-        return projectService.getById(id);
+        return projectService.getByIdWithUsers(id);
     }
 
     @PutMapping("/{id}")

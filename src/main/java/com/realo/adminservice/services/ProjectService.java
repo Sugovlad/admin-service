@@ -63,11 +63,15 @@ public class ProjectService {
     }
 
     @Transactional
-    public Mono<Project> getById(Long id) {
+    public Mono<Project> getByIdWithUsers(Long id) {
+        return getById(id)
+                .flatMap(this::enrichProjectWithUsers);
+    }
+
+    private Mono<Project> getById(Long id) {
         return projectRepository
                 .findById(id)
-                .switchIfEmpty(Mono.error(new NotFoundException("Can't found project id: " + id)))
-                .flatMap(this::enrichProjectWithUsers);
+                .switchIfEmpty(Mono.error(new NotFoundException("Can't found project id: " + id)));
     }
 
     @Transactional
@@ -76,7 +80,6 @@ public class ProjectService {
                 .map(existedProject -> {
                     existedProject.setProjectName(updatedProject.getProjectName());
                     existedProject.setStatus(updatedProject.getStatus());
-                    existedProject.setAssignedUsers(updatedProject.getAssignedUsers());
 
                     return existedProject;
                 })
@@ -102,7 +105,7 @@ public class ProjectService {
 
     @Transactional
     public Mono<Project> addUser(Long projectId, Long userId) {
-        var projectMono = getById(projectId);
+        var projectMono = getByIdWithUsers(projectId);
         var userMono = userService.getById(userId);
 
         return Mono
@@ -113,7 +116,7 @@ public class ProjectService {
     @Transactional
     public Mono<Project> removeUser(Long projectId, Long userId) {
         var userMono = userService.getById(userId);
-        var projectMono = getById(projectId);
+        var projectMono = getByIdWithUsers(projectId);
 
         return Mono
                 .zip(projectMono, userMono)
